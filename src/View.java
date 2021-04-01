@@ -30,12 +30,6 @@ public class View extends JFrame{
     String[][] data = returnNotesData();
 
     public View() throws IOException {
-        //Section des paramètres du frame
-        frame = new JFrame("Marc-Antoine Dubois - 1909082");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500,300);
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(new FlowLayout());
 
         //Section de la table des notes
         model = new DefaultTableModel(data,colNames){
@@ -45,45 +39,86 @@ public class View extends JFrame{
             }
         };
         tableNotes = new JTable(model);
-
         tableNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableNotes.setRowSelectionInterval(0,0);
-
         JScrollPane scrollNotes = new JScrollPane(tableNotes);
-        scrollNotes.setPreferredSize(new Dimension(400,100));
+        scrollNotes.setPreferredSize(new Dimension(400,250));
+
+        //Section des Labels
+        lblDA = new JLabel("DA");
+        lblExam1 = new JLabel("Examen 1");
+        lblExam2 = new JLabel("Examen 2");
+        lblTP1 = new JLabel("TP 1");
+        lblTP2 = new JLabel("TP 2");
+
+        //Section des textfields
+        txfDA = new JTextField();
+        txfDA.setPreferredSize(new Dimension(80,25));
+        txfExam1 = new JTextField();
+        txfExam1.setPreferredSize(new Dimension(80,25));
+        txfExam2 = new JTextField();
+        txfExam2.setPreferredSize(new Dimension(80,25));
+        txfTP1 = new JTextField();
+        txfTP1.setPreferredSize(new Dimension(80,25));
+        txfTP2 = new JTextField();
+        txfTP2.setPreferredSize(new Dimension(80,25));
+
+        //BTNLIST
+        btnAdd = new JButton("Ajouter");
+        btnModify = new JButton("Modifier");
+        btnDelete = new JButton("Supprimer");
 
         btnQuit = new JButton("Quitter");
-        /*btnQuit.addActionListener(e -> {
-            try {
-                btnQuitGo();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
+        btnQuit.addActionListener(e -> {
+            int result = JOptionPane.showConfirmDialog(frame, "Voulez-vous enregistrer avant de quitter?", "Confirmation enregistrement",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if(result == JOptionPane.YES_OPTION){
+                try {
+                    saveDataToNotes(Utils.convertT2D(model));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                frame.dispose();
             }
-        });*/
-
-        btnQuit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(frame, "Voulez-vous enregistrer avant de quitter?", "Confirmation enregistrement",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-                if(result == JOptionPane.YES_OPTION){
-                    try {
-                        saveDataToNotes(Utils.convertT2D(model));
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
-                    frame.dispose();
-                }
-                else if(result == JOptionPane.NO_OPTION){
-                    frame.dispose();
-                }
+            else if(result == JOptionPane.NO_OPTION){
+                frame.dispose();
             }
         });
 
-        frame.add(scrollNotes);
-        frame.add(btnQuit);
+
+        //MAIN PANEL
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+
+
+        
+        //Section des paramètres du frame
+        frame = new JFrame("Marc-Antoine Dubois - 1909082");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(1000,600);
+        frame.getContentPane().add(mainPanel);
+        frame.setLocationRelativeTo(null);
+
+        frame.add(mainPanel);
         frame.setVisible(true);
+
+       /* frame.add(scrollNotes);
+        frame.add(btnQuit);
+
+        frame.add(lblDA);
+        frame.add(txfDA);
+
+        frame.add(lblExam1);
+        frame.add(txfExam1);
+
+        frame.add(lblExam2);
+        frame.add(txfExam2);
+
+        frame.add(lblTP1);
+        frame.add(txfTP1);
+
+        frame.add(lblTP2);
+        frame.add(txfTP2);*/
     }
 
     public static void main(String[] args) throws IOException {
@@ -134,3 +169,25 @@ public class View extends JFrame{
     }
 }
 
+
+/*//Panel des notes
+        JPanel notesPanel = new JPanel(new FlowLayout());
+        notesPanel.add(scrollNotes);
+        notesPanel.add(btnAdd);
+        notesPanel.add(btnModify);
+        notesPanel.add(btnDelete);
+        mainPanel.add(notesPanel, BorderLayout.WEST);
+
+        //Panel de controle
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        controlPanel.add(btnAdd);
+        controlPanel.add(btnModify);
+        controlPanel.add(btnDelete);
+        mainPanel.add(controlPanel, BorderLayout.EAST);
+
+        //Panel bas droit
+        JPanel bottomRightPanel = new JPanel(());
+        GridBagConstraints constraintBottomRightPanel = new GridBagConstraints();
+        constraintBottomRightPanel.anchor = GridBagConstraints.LAST_LINE_END;
+        bottomRightPanel.add(btnQuit);
+        mainPanel.add(bottomRightPanel, constraintBottomRightPanel);*/
