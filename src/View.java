@@ -1,3 +1,4 @@
+import javax.naming.ldap.Control;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -42,7 +43,7 @@ public class View extends JFrame{
         tableNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableNotes.setRowSelectionInterval(0,0);
         JScrollPane scrollNotes = new JScrollPane(tableNotes);
-        scrollNotes.setPreferredSize(new Dimension(400,250));
+        scrollNotes.setPreferredSize(new Dimension(600,400));
 
         //Section des Labels
         lblDA = new JLabel("DA");
@@ -87,19 +88,83 @@ public class View extends JFrame{
         });
 
 
-        //MAIN PANEL
-        JPanel mainPanel = new JPanel(new GridBagLayout());
+        //Panel gauche
+        JPanel notesPanel = new JPanel();
+        notesPanel.setLayout(new BorderLayout());
+        notesPanel.add(scrollNotes, BorderLayout.NORTH);
+        //notesPanel.add(blabla, BorderLayout.SOUTH);
 
 
-        
+        //Panel controle
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new GridBagLayout());
+        GridBagConstraints mainConstraints = new GridBagConstraints();
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 0;
+        mainConstraints.gridy = 0;
+        controlPanel.add(lblDA, mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 1;
+        mainConstraints.gridy = 0;
+        controlPanel.add(txfDA,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 0;
+        mainConstraints.gridy = 1;
+        controlPanel.add(lblExam1,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 1;
+        mainConstraints.gridy = 1;
+        controlPanel.add(txfExam1,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 0;
+        mainConstraints.gridy = 2;
+        controlPanel.add(lblExam2,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 1;
+        mainConstraints.gridy = 2;
+        controlPanel.add(txfExam2,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 0;
+        mainConstraints.gridy = 3;
+        controlPanel.add(btnAdd,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 1;
+        mainConstraints.gridy = 3;
+        controlPanel.add(btnModify,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 2;
+        mainConstraints.gridy = 3;
+        controlPanel.add(btnDelete,mainConstraints);
+
+
+
+        //Panel pour le boutton quitter (sert seulement a resize le boutton en réalité)
+        JPanel bottomRightPanel = new JPanel();
+        bottomRightPanel.setLayout(new BorderLayout());
+        bottomRightPanel.setPreferredSize(new Dimension(25,35));
+        bottomRightPanel.add(btnQuit, BorderLayout.EAST);
+
+
+
         //Section des paramètres du frame
         frame = new JFrame("Marc-Antoine Dubois - 1909082");
+        frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(1000,600);
-        frame.getContentPane().add(mainPanel);
+        frame.setSize(new Dimension(1000,600));
         frame.setLocationRelativeTo(null);
 
-        frame.add(mainPanel);
+        frame.add(controlPanel, BorderLayout.EAST);
+        frame.add(notesPanel, BorderLayout.WEST);
+        frame.add(bottomRightPanel, BorderLayout.PAGE_END);
         frame.setVisible(true);
 
        /* frame.add(scrollNotes);
@@ -170,24 +235,5 @@ public class View extends JFrame{
 }
 
 
-/*//Panel des notes
-        JPanel notesPanel = new JPanel(new FlowLayout());
-        notesPanel.add(scrollNotes);
-        notesPanel.add(btnAdd);
-        notesPanel.add(btnModify);
-        notesPanel.add(btnDelete);
-        mainPanel.add(notesPanel, BorderLayout.WEST);
 
-        //Panel de controle
-        JPanel controlPanel = new JPanel(new FlowLayout());
-        controlPanel.add(btnAdd);
-        controlPanel.add(btnModify);
-        controlPanel.add(btnDelete);
-        mainPanel.add(controlPanel, BorderLayout.EAST);
 
-        //Panel bas droit
-        JPanel bottomRightPanel = new JPanel(());
-        GridBagConstraints constraintBottomRightPanel = new GridBagConstraints();
-        constraintBottomRightPanel.anchor = GridBagConstraints.LAST_LINE_END;
-        bottomRightPanel.add(btnQuit);
-        mainPanel.add(bottomRightPanel, constraintBottomRightPanel);*/
