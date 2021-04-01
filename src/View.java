@@ -1,30 +1,88 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
 
 public class View extends JFrame{
     JFrame frame;
     JTable tableNotes;
     JTable tableStats;
+    DefaultTableModel model;
+    JButton btnAdd;
+    JButton btnModify;
+    JButton btnDelete;
+    JButton btnQuit;
+    JTextField txfDA;
+    JTextField txfExam1;
+    JTextField txfExam2;
+    JTextField txfTP1;
+    JTextField txfTP2;
+    JLabel lblDA;
+    JLabel lblExam1;
+    JLabel lblExam2;
+    JLabel lblTP1;
+    JLabel lblTP2;
+
 
     String[] colNames = {"DA", "Examen 1", "Examen 2", "TP1", "TP2", "Total %"};
     String[][] data = returnNotesData();
 
     public View() throws IOException {
-        frame = new JFrame("Marc-Antoine Dubois - TP1"); // NE PAS OUBLIER DE LE CHANGER
+        //Section des paramètres du frame
+        frame = new JFrame("Marc-Antoine Dubois - 1909082");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(500,300);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new FlowLayout());
 
-        tableNotes = new JTable(data, colNames);
+        //Section de la table des notes
+        model = new DefaultTableModel(data,colNames){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tableNotes = new JTable(model);
+
+        tableNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableNotes.setRowSelectionInterval(0,0);
+
         JScrollPane scrollNotes = new JScrollPane(tableNotes);
         scrollNotes.setPreferredSize(new Dimension(400,100));
 
+        btnQuit = new JButton("Quitter");
+        /*btnQuit.addActionListener(e -> {
+            try {
+                btnQuitGo();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });*/
+
+        btnQuit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int result = JOptionPane.showConfirmDialog(frame, "Voulez-vous enregistrer avant de quitter?", "Confirmation enregistrement",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if(result == JOptionPane.YES_OPTION){
+                    try {
+                        saveDataToNotes(Utils.convertT2D(model));
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                    frame.dispose();
+                }
+                else if(result == JOptionPane.NO_OPTION){
+                    frame.dispose();
+                }
+            }
+        });
+
         frame.add(scrollNotes);
+        frame.add(btnQuit);
         frame.setVisible(true);
     }
 
@@ -32,13 +90,14 @@ public class View extends JFrame{
         View myView = new View();
     }
 
+
     public static String[][] returnNotesData() throws IOException {
 
         BufferedReader reader = new BufferedReader(new FileReader("texte/notes.txt"));
         String[] tab;
         String line;
-        int lineNumber = (int)reader.lines().count();
-        String[][] data = new String[lineNumber][6];
+        int totalLines = (int)reader.lines().count(); // Le nombre total de lignes dans notes.txt
+        String[][] data = new String[totalLines][6];
         reader = new BufferedReader(new FileReader("texte/notes.txt"));
         int linePos = 0;
 
@@ -60,6 +119,18 @@ public class View extends JFrame{
         }
         reader.close();
         return data;
+    }
+
+    public static void saveDataToNotes(int[][] tab) throws IOException {
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter("texte/notes.txt", false));
+        for (int i = 0; i < tab.length; i++) {
+            for (int j = 0; j < tab[i].length; j++) {
+                writer.write(tab[i][j] + " ");
+            }
+            writer.newLine();
+        }
+        writer.close();
     }
 }
 
