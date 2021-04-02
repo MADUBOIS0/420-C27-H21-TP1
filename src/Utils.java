@@ -1,3 +1,9 @@
+/*
+  Objectif:
+  Auteur: Marc-Antoine Dubois
+  Date: 2021-04-02 Session A2021
+ */
+
 import javax.swing.table.DefaultTableModel;
 
 public class Utils {

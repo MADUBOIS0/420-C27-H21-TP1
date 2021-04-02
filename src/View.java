@@ -1,15 +1,27 @@
-import javax.naming.ldap.Control;
+/*
+  Objectif:
+  Auteur: Marc-Antoine Dubois
+  Date: 2021-04-02 Session A2021
+ */
+
+
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.*;
 
 public class View extends JFrame{
+    //region Déclaration des variables
     JFrame frame;
-    JTable tableNotes;
-    JTable tableStats;
+    JPanel notesPanel; //Le panneau de notes contient le JTable de statistiques et le scrollPane de notes
+    JPanel controlPanel; //Le panneau de controle va contenir tout les textFields et JButton qui affecte le tableau de notes
+    JPanel centerPanel; //Le center panel va contenir le controlPanel, ça me permet de mettre le controlPanel au Nord de celui ci
+    JPanel bottomRightPanel; // Panneau à l'extreme droite, sert seulement a mettre le boutton quitter
+    JTable tableNotes; //Tableau des notes des élèves, il est garni avec la fonction returnNotesData
+    JTable tableStats; // Tableau de statistique diverses par rapport au données dans le tableau de notes
     DefaultTableModel model;
     JButton btnAdd;
     JButton btnModify;
@@ -26,13 +38,37 @@ public class View extends JFrame{
     JLabel lblTP1;
     JLabel lblTP2;
 
+    // Le keylistener sert a verifier que l'utilisateur entre seulement des entiers
+    KeyListener txfKeyListener = new KeyListener() {
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            // Verifie si valeur entré n'est pas un chiffre, que la touche n'est pas backspace et si la classe n'est pas un JTextfield
+            if (!(Character.isDigit(e.getKeyChar())) && e.getKeyChar() != 8 && e.getSource().getClass() == JTextField.class){
+                JTextField txf = (JTextField) e.getSource(); // le textfield ou la touche a été app1elé
+                String s = txf.getText(); // valeur du textfield
+                JOptionPane.showMessageDialog(frame, "Veuillez entrer un nombre entre 0-9");
+                txf.setText(s.substring(0, s.length() - 1));
+            }
+        }
+    };
+
 
     String[] colNames = {"DA", "Examen 1", "Examen 2", "TP1", "TP2", "Total %"};
     String[][] data = returnNotesData();
+    //endregion
 
     public View() throws IOException {
 
-        //Section de la table des notes
+        //region Section des JTables
         model = new DefaultTableModel(data,colNames){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -44,22 +80,30 @@ public class View extends JFrame{
         tableNotes.setRowSelectionInterval(0,0);
         JScrollPane scrollNotes = new JScrollPane(tableNotes);
         scrollNotes.setPreferredSize(new Dimension(600,400));
+        //endregion
 
-        //Section des Labels
+        //region Section des Labels
         lblDA = new JLabel("DA");
         lblExam1 = new JLabel("Examen 1");
         lblExam2 = new JLabel("Examen 2");
         lblTP1 = new JLabel("TP 1");
         lblTP2 = new JLabel("TP 2");
+        //endregion
 
-        //Section des textfields
+        //region Section des textfields
         txfDA = new JTextField();
+        txfDA.addKeyListener(txfKeyListener);
         txfExam1 = new JTextField();
+        txfExam1.addKeyListener(txfKeyListener);
         txfExam2 = new JTextField();
+        txfExam2.addKeyListener(txfKeyListener);
         txfTP1 = new JTextField();
+        txfTP1.addKeyListener(txfKeyListener);
         txfTP2 = new JTextField();
+        txfTP2.addKeyListener(txfKeyListener);
+        //endregion
 
-        //BTNLIST
+        //region Déclaration des boutons
         btnAdd = new JButton("Ajouter");
         btnModify = new JButton("Modifier");
         btnDelete = new JButton("Supprimer");
@@ -82,14 +126,17 @@ public class View extends JFrame{
             }
         });
 
-        //Panel gauche, panel qui contient la table de notes et de statistiques
-        JPanel notesPanel = new JPanel();
+        //endregion
+
+        //region Panel gauche, panel qui contient la table de notes et de statistiques
+        notesPanel = new JPanel();
         notesPanel.setLayout(new BorderLayout());
         notesPanel.add(scrollNotes, BorderLayout.NORTH);
         //notesPanel.add(blabla, BorderLayout.SOUTH);
+        //endregion
 
-        //Panel controle, tout les controles pour modifier les notes
-        JPanel controlPanel = new JPanel();
+        //region Panel controle, tout les controles pour modifier les notes
+        controlPanel = new JPanel();
         controlPanel.setLayout(new GridBagLayout());
         GridBagConstraints mainConstraints = new GridBagConstraints();
         mainConstraints.insets = new Insets(5,10,5,10);
@@ -160,18 +207,19 @@ public class View extends JFrame{
         mainConstraints.gridy = 5;
         controlPanel.add(btnDelete,mainConstraints);
 
-        //Panel des controles, sert a positioné les controles du panneau du centre plus haut
-        JPanel centerPanel = new JPanel();
+        centerPanel = new JPanel();
         centerPanel.setLayout(new BorderLayout());
         centerPanel.add(controlPanel, BorderLayout.NORTH);
+        //endregion
 
-        //Panel pour le boutton quitter
-        JPanel bottomRightPanel = new JPanel();
+        //region Panel pour le boutton quitter
+        bottomRightPanel = new JPanel();
         bottomRightPanel.setLayout(new BorderLayout());
         bottomRightPanel.setPreferredSize(new Dimension(25,35));
         bottomRightPanel.add(btnQuit, BorderLayout.EAST);
+        //endregion
 
-        //Section des paramètres du frame
+        //region Section des paramètres du frame
         frame = new JFrame("Marc-Antoine Dubois - 1909082");
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -182,6 +230,7 @@ public class View extends JFrame{
         frame.add(centerPanel, BorderLayout.CENTER);
         frame.add(bottomRightPanel, BorderLayout.PAGE_END);
         frame.setVisible(true);
+        //endregion
     }
 
     public static void main(String[] args) throws IOException {
