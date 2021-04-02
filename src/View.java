@@ -54,15 +54,10 @@ public class View extends JFrame{
 
         //Section des textfields
         txfDA = new JTextField();
-        txfDA.setPreferredSize(new Dimension(80,25));
         txfExam1 = new JTextField();
-        txfExam1.setPreferredSize(new Dimension(80,25));
         txfExam2 = new JTextField();
-        txfExam2.setPreferredSize(new Dimension(80,25));
         txfTP1 = new JTextField();
-        txfTP1.setPreferredSize(new Dimension(80,25));
         txfTP2 = new JTextField();
-        txfTP2.setPreferredSize(new Dimension(80,25));
 
         //BTNLIST
         btnAdd = new JButton("Ajouter");
@@ -87,20 +82,18 @@ public class View extends JFrame{
             }
         });
 
-
-        //Panel gauche
+        //Panel gauche, panel qui contient la table de notes et de statistiques
         JPanel notesPanel = new JPanel();
         notesPanel.setLayout(new BorderLayout());
         notesPanel.add(scrollNotes, BorderLayout.NORTH);
         //notesPanel.add(blabla, BorderLayout.SOUTH);
 
-
-        //Panel
-
-        //Panel controle
+        //Panel controle, tout les controles pour modifier les notes
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new GridBagLayout());
         GridBagConstraints mainConstraints = new GridBagConstraints();
+        mainConstraints.insets = new Insets(5,10,5,10);
+        mainConstraints.ipadx = 25;
 
         mainConstraints.fill = GridBagConstraints.HORIZONTAL;
         mainConstraints.gridx = 0;
@@ -135,27 +128,48 @@ public class View extends JFrame{
         mainConstraints.fill = GridBagConstraints.HORIZONTAL;
         mainConstraints.gridx = 0;
         mainConstraints.gridy = 3;
-        controlPanel.add(btnAdd,mainConstraints);
+        controlPanel.add(lblTP1,mainConstraints);
 
         mainConstraints.fill = GridBagConstraints.HORIZONTAL;
         mainConstraints.gridx = 1;
         mainConstraints.gridy = 3;
+        controlPanel.add(txfTP1,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 0;
+        mainConstraints.gridy = 4;
+        controlPanel.add(lblTP2,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 1;
+        mainConstraints.gridy = 4;
+        controlPanel.add(txfTP2,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 0;
+        mainConstraints.gridy = 5;
+        controlPanel.add(btnAdd,mainConstraints);
+
+        mainConstraints.fill = GridBagConstraints.HORIZONTAL;
+        mainConstraints.gridx = 1;
+        mainConstraints.gridy = 5;
         controlPanel.add(btnModify,mainConstraints);
 
         mainConstraints.fill = GridBagConstraints.HORIZONTAL;
         mainConstraints.gridx = 2;
-        mainConstraints.gridy = 3;
+        mainConstraints.gridy = 5;
         controlPanel.add(btnDelete,mainConstraints);
 
+        //Panel des controles, sert a positioné les controles du panneau du centre plus haut
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BorderLayout());
+        centerPanel.add(controlPanel, BorderLayout.NORTH);
 
-
-        //Panel pour le boutton quitter (sert seulement a resize le boutton en réalité)
+        //Panel pour le boutton quitter
         JPanel bottomRightPanel = new JPanel();
         bottomRightPanel.setLayout(new BorderLayout());
         bottomRightPanel.setPreferredSize(new Dimension(25,35));
         bottomRightPanel.add(btnQuit, BorderLayout.EAST);
-
-
 
         //Section des paramètres du frame
         frame = new JFrame("Marc-Antoine Dubois - 1909082");
@@ -164,34 +178,15 @@ public class View extends JFrame{
         frame.setSize(new Dimension(1000,600));
         frame.setLocationRelativeTo(null);
 
-        frame.add(controlPanel, BorderLayout.CENTER);
         frame.add(notesPanel, BorderLayout.WEST);
+        frame.add(centerPanel, BorderLayout.CENTER);
         frame.add(bottomRightPanel, BorderLayout.PAGE_END);
         frame.setVisible(true);
-
-        frame.add(scrollNotes);
-        frame.add(btnQuit);
-
-        frame.add(lblDA);
-        frame.add(txfDA);
-
-        frame.add(lblExam1);
-        frame.add(txfExam1);
-
-        frame.add(lblExam2);
-        frame.add(txfExam2);
-
-        frame.add(lblTP1);
-        frame.add(txfTP1);
-
-        frame.add(lblTP2);
-        frame.add(txfTP2);
     }
 
     public static void main(String[] args) throws IOException {
         View myView = new View();
     }
-
 
     public static String[][] returnNotesData() throws IOException {
 
