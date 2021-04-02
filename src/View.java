@@ -4,8 +4,6 @@
   Date: 2021-04-02 Session A2021
  */
 
-
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -20,25 +18,25 @@ public class View extends JFrame{
     JPanel controlPanel; //Le panneau de controle va contenir tout les textFields et JButton qui affecte le tableau de notes
     JPanel centerPanel; //Le center panel va contenir le controlPanel, ça me permet de mettre le controlPanel au Nord de celui ci
     JPanel bottomRightPanel; // Panneau à l'extreme droite, sert seulement a mettre le boutton quitter
-    JTable tableNotes; //Tableau des notes des élèves, il est garni avec la fonction returnNotesData
-    JTable tableStats; // Tableau de statistique diverses par rapport au données dans le tableau de notes
-    DefaultTableModel model;
-    JButton btnAdd;
-    JButton btnModify;
-    JButton btnDelete;
-    JButton btnQuit;
-    JTextField txfDA;
-    JTextField txfExam1;
-    JTextField txfExam2;
-    JTextField txfTP1;
-    JTextField txfTP2;
-    JLabel lblDA;
-    JLabel lblExam1;
-    JLabel lblExam2;
-    JLabel lblTP1;
-    JLabel lblTP2;
+    JTable tableNotes; //Tableau des notes des élèves, il est garni avec la fonction getNotesData
+    JTable tableStats; //Tableau de statistique diverses par rapport au données dans le tableau de notes
+    DefaultTableModel modelNotes; //Tablemodel pour tableNotes
+    JButton btnAdd; //JButton pour ajouter des élèves à tableNotes
+    JButton btnModify; //JButton qui modifie les entrées qui existe déja dans tableNotes
+    JButton btnDelete; //Supprimer des entrées de tableNotes
+    JButton btnQuit; //Quitter le programme et demander à l'utilisateur s'il veut sauvegarder
+    JTextField txfDA; //JTextField du numéro d'admission qui sera ajouter/modifier/supprimer dans tableNotes
+    JTextField txfExam1; //JTextField de la note d'exam 1 qui sera ajouter/modifier/supprimer dans tableNotes
+    JTextField txfExam2; //JTextField de la note d'exam 2 qui sera ajouter/modifier/supprimer dans tableNotes
+    JTextField txfTP1;//JTextField de la note du TP1 qui sera ajouter/modifier/supprimer dans tableNotes
+    JTextField txfTP2;//JTextField de la note du TP2 qui sera ajouter/modifier/supprimer dans tableNotes
+    JLabel lblDA; //Sert à indiquer que l'utilisateur modifie txfDA
+    JLabel lblExam1; //Sert à indiquer que l'utilisateur modifie txfExam1
+    JLabel lblExam2; //Sert à indiquer que l'utilisateur modifie txfExam2
+    JLabel lblTP1; //Sert à indiquer que l'utilisateur modifie txfTP1
+    JLabel lblTP2; //Sert à indiquer que l'utilisateur modifie txfTP2
 
-    // Le keylistener sert a verifier que l'utilisateur entre seulement des entiers
+    // Le keylistener sert a verifier que l'utilisateur entre seulement des entiers, il évite également la répetition
     KeyListener txfKeyListener = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent e) {
@@ -53,29 +51,27 @@ public class View extends JFrame{
         public void keyReleased(KeyEvent e) {
             // Verifie si valeur entré n'est pas un chiffre, que la touche n'est pas backspace et si la classe n'est pas un JTextfield
             if (!(Character.isDigit(e.getKeyChar())) && e.getKeyChar() != 8 && e.getSource().getClass() == JTextField.class){
-                JTextField txf = (JTextField) e.getSource(); // le textfield ou la touche a été app1elé
-                String s = txf.getText(); // valeur du textfield
+                ((JTextField) e.getSource()).setText("");
                 JOptionPane.showMessageDialog(frame, "Veuillez entrer un nombre entre 0-9");
-                txf.setText(s.substring(0, s.length() - 1));
             }
         }
     };
 
 
-    String[] colNames = {"DA", "Examen 1", "Examen 2", "TP1", "TP2", "Total %"};
-    String[][] data = returnNotesData();
+    String[] colNamesNotes = {"DA", "Examen 1", "Examen 2", "TP1", "TP2", "Total %"}; //Liste des noms pour colonne de tableNotes
+    String[][] dataNotes = getNotesData(); // Tableau 2d des DA et notes, reçoit ses données d'un fichier .txt
     //endregion
 
     public View() throws IOException {
 
         //region Section des JTables
-        model = new DefaultTableModel(data,colNames){
+        modelNotes = new DefaultTableModel(dataNotes,colNamesNotes){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        tableNotes = new JTable(model);
+        tableNotes = new JTable(modelNotes);
         tableNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableNotes.setRowSelectionInterval(0,0);
         JScrollPane scrollNotes = new JScrollPane(tableNotes);
@@ -115,7 +111,7 @@ public class View extends JFrame{
                     JOptionPane.QUESTION_MESSAGE);
             if(result == JOptionPane.YES_OPTION){
                 try {
-                    saveDataToNotes(Utils.convertT2D(model));
+                    saveDataToNotes(Utils.convertT2D(modelNotes));
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
@@ -237,7 +233,7 @@ public class View extends JFrame{
         View myView = new View();
     }
 
-    public static String[][] returnNotesData() throws IOException {
+    public static String[][] getNotesData() throws IOException {
 
         BufferedReader reader = new BufferedReader(new FileReader("texte/notes.txt"));
         String[] tab;
