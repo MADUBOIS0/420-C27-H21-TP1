@@ -95,6 +95,8 @@ public class View extends JFrame{
         //notesPanel.add(blabla, BorderLayout.SOUTH);
 
 
+        //Panel
+
         //Panel controle
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new GridBagLayout());
@@ -162,12 +164,12 @@ public class View extends JFrame{
         frame.setSize(new Dimension(1000,600));
         frame.setLocationRelativeTo(null);
 
-        frame.add(controlPanel, BorderLayout.EAST);
+        frame.add(controlPanel, BorderLayout.CENTER);
         frame.add(notesPanel, BorderLayout.WEST);
         frame.add(bottomRightPanel, BorderLayout.PAGE_END);
         frame.setVisible(true);
 
-       /* frame.add(scrollNotes);
+        frame.add(scrollNotes);
         frame.add(btnQuit);
 
         frame.add(lblDA);
@@ -183,7 +185,7 @@ public class View extends JFrame{
         frame.add(txfTP1);
 
         frame.add(lblTP2);
-        frame.add(txfTP2);*/
+        frame.add(txfTP2);
     }
 
     public static void main(String[] args) throws IOException {
