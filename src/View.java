@@ -130,12 +130,18 @@ public class View extends JFrame{
             }
         });
 
+        //Scrollpane pour la table de notes, permet de scroll si il y a trop de DA
         JScrollPane scrollNotes = new JScrollPane(tableNotes);
         scrollNotes.setPreferredSize(new Dimension(600,400));
+
+        
+
+
         //endregion
 
         //region Déclaration des boutons
         btnAdd = new JButton("Ajouter");
+        //Action du button ajouter, ajoute une nouvelle ligne si le DA n'existe pas et sélectionne la dernière ligne
         btnAdd.addActionListener(e ->{
             int[][] tempTab =  Utils.convertT2D(modelNotes); //tableau des notes
             if (Utils.isPresentDA(tempTab, Integer.parseInt(txfDA.getText()))){
@@ -143,10 +149,12 @@ public class View extends JFrame{
             }
             else{
                 modelNotes.addRow(new Object[]{txfDA.getText(), txfExam1.getText(), txfExam2.getText(), txfTP1.getText(), txfTP2.getText(), String.valueOf(getAverage())});
+                tableNotes.setRowSelectionInterval(tempTab.length, tempTab.length);
             }
         });
 
         btnModify = new JButton("Modifier");
+        // Action du button modifier, change les informations d'une row seulement si le DA n'est pas différent et n'éxiste pas ailleur
         btnModify.addActionListener(e ->{
             int row = tableNotes.getSelectedRow();
             int[][] tempTab =  Utils.convertT2D(modelNotes); //tableau des notes
@@ -164,9 +172,21 @@ public class View extends JFrame{
                 modelNotes.setValueAt(getAverage(), row, 5);
             }
         });
+
         btnDelete = new JButton("Supprimer");
+        //Action du button delete, supprime la ligne sélectionné, si aucune ligne restante, affiche un popup
+        btnDelete.addActionListener(e ->{
+            if (tableNotes.getSelectedRow() >= 0){
+                modelNotes.removeRow(tableNotes.getSelectedRow());
+            }
+            else if(tableNotes.getRowCount() == 0){
+                JOptionPane.showMessageDialog(frame, "Il n'y a plus de données à effacer" );
+            }
+
+        });
 
         btnQuit = new JButton("Quitter");
+        //Action button quitter, quitter le programme, si l'utilisateur dit oui, sauvegarder, sinon simplement quitter
         btnQuit.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(frame, "Voulez-vous enregistrer avant de quitter?", "Confirmation enregistrement",
                     JOptionPane.YES_NO_OPTION,
@@ -302,6 +322,10 @@ public class View extends JFrame{
         txfExam2.setText(String.valueOf(tab[selRow][2]));
         txfTP1.setText(String.valueOf(tab[selRow][3]));
         txfTP2.setText(String.valueOf(tab[selRow][4]));
+    }
+
+    private void tableStatsChange(){
+
     }
 
     public static void main(String[] args) throws IOException {
