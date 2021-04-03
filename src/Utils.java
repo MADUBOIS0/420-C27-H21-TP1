@@ -58,7 +58,7 @@ public class Utils {
      */
     public static int maxEval(int[][] tab, int col){
         int max = 0; //le maximum à retourner
-        for(int iRow = 0; iRow < tab[col].length; iRow++){
+        for(int iRow = 0; iRow < tab.length; iRow++){
             if (tab[iRow][col] > max){
                 max = tab[iRow][col];
             }
@@ -184,9 +184,4 @@ public class Utils {
         }
         else return -1;
     }
-
-
-
-
-
 }

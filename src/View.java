@@ -64,12 +64,14 @@ public class View extends JFrame{
     String[] colNamesNotes = {"DA", "Examen 1", "Examen 2", "TP1", "TP2", "Total %"}; //Liste des noms pour colonne de tableNotes
     String[][] dataNotes = getNotesData(); // Tableau 2d des DA et notes, reçoit ses données d'un fichier .txt
 
+    // Initialisation de donnée pour statistiques
     String[][] dataStats = {
             {"Moyenne","0", "0", "0", "0", "0"},
             {"Nombre minimum","0", "0", "0", "0", "0"},
             {"Nombre maximum","0", "0", "0", "0"},
             {"Nombre d'élèves"}
     };
+    // Colonne vide de la table statistique
     String[] colNamesStats = {" ", " ", " ", " ", " ", " "};
 
     //endregion
@@ -341,7 +343,9 @@ public class View extends JFrame{
         tableStatsChange();
     }
 
+    // Change les données de la table statistique
     private void tableStatsChange(){
+        //Données de la table de notes
         int[][] tab = Utils.convertT2D((DefaultTableModel) tableNotes.getModel());
 
         //Moyenne
@@ -356,6 +360,7 @@ public class View extends JFrame{
         for (int i = 1; i < 6 ; i++){
             modelStats.setValueAt(Utils.maxEval(tab,i), 2, i);
         }
+        //Nombre d'élèves
         modelStats.setValueAt(tab.length, 3, 1);
 
     }
