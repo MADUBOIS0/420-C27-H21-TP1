@@ -20,11 +20,17 @@ public class Utils {
         int nbRow = model.getRowCount(); // nombre de lignes dans le model
         int nbCol = model.getColumnCount(); // nombre de colonnes dans le model
 
+
         int[][] tab = new int[nbRow][nbCol]; // Le tableau 2D à retourner
 
         for (int i = 0; i < nbRow; i++){
             for (int j = 0; j < nbCol ; j++){
-                tab[i][j] = Integer.parseInt((String) model.getValueAt(i,j));
+               if(model.getValueAt(i,j) instanceof String){
+                   tab[i][j] = Integer.parseInt((String) model.getValueAt(i,j));
+               }
+               else if(model.getValueAt(i,j) instanceof Integer) {
+                   tab[i][j] =  (Integer)(model.getValueAt(i,j));
+               }
             }
         }
         return tab;
@@ -119,15 +125,7 @@ public class Utils {
         }
 
         quickSort(tab, tabIndex,0 ,0, tab.length-1);
-
-        for (int i = 0; i<tabIndex.length; i++){
-           System.out.println(tab[tabIndex[i]][0] + " " );
-        }
-
         int index = fouilleDichoDA(tab, tabIndex, valueToFind);
-
-        System.out.println(index);
-
         if(index != -1){
             return true;
         }

@@ -15,7 +15,7 @@ import java.io.*;
 
 public class View extends JFrame{
     //region Déclaration des variables
-    JFrame frame;
+    JFrame frame; // GUI
     JPanel notesPanel; //Le panneau de notes contient le JTable de statistiques et le scrollPane de notes
     JPanel controlPanel; //Le panneau de controle va contenir tout les textFields et JButton qui affecte le tableau de notes
     JPanel centerPanel; //Le center panel va contenir le controlPanel, ça me permet de mettre le controlPanel au Nord de celui ci
@@ -139,17 +139,30 @@ public class View extends JFrame{
         btnAdd.addActionListener(e ->{
             int[][] tempTab =  Utils.convertT2D(modelNotes); //tableau des notes
             if (Utils.isPresentDA(tempTab, Integer.parseInt(txfDA.getText()))){
-
+                JOptionPane.showMessageDialog(frame, "le DA " + txfDA.getText() + " existe déja" );
             }
             else{
-
+                modelNotes.addRow(new Object[]{txfDA.getText(), txfExam1.getText(), txfExam2.getText(), txfTP1.getText(), txfTP2.getText(), String.valueOf(getAverage())});
             }
         });
 
         btnModify = new JButton("Modifier");
         btnModify.addActionListener(e ->{
+            int row = tableNotes.getSelectedRow();
+            int[][] tempTab =  Utils.convertT2D(modelNotes); //tableau des notes
+            int initialDA = Integer.parseInt((String) tableNotes.getValueAt(row,0));
 
-
+            if (initialDA != Integer.parseInt(txfDA.getText()) && Utils.isPresentDA(tempTab, Integer.parseInt(txfDA.getText()))){
+                JOptionPane.showMessageDialog(frame, "le DA " + txfDA.getText() + " existe déja" );
+            }
+            else{
+                modelNotes.setValueAt(txfDA.getText(), row, 0);
+                modelNotes.setValueAt(txfExam1.getText(), row, 1);
+                modelNotes.setValueAt(txfExam2.getText(), row, 2);
+                modelNotes.setValueAt(txfTP1.getText(), row, 3);
+                modelNotes.setValueAt(txfTP2.getText() ,row, 4);
+                modelNotes.setValueAt(getAverage(), row, 5);
+            }
         });
         btnDelete = new JButton("Supprimer");
 
@@ -335,6 +348,19 @@ public class View extends JFrame{
             writer.newLine();
         }
         writer.close();
+    }
+
+    /**
+     *
+     * @return retourne la moyenne du texte des JTextFields
+     */
+    private int getAverage(){
+        int avg=0;
+        avg+= Integer.parseInt(txfExam1.getText());
+        avg+= Integer.parseInt(txfExam2.getText());
+        avg+= Integer.parseInt(txfTP1.getText());
+        avg+= Integer.parseInt(txfTP2.getText());
+        return avg / 4;
     }
 }
 
