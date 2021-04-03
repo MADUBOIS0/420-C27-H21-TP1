@@ -5,6 +5,8 @@
  */
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -21,6 +23,7 @@ public class View extends JFrame{
     JTable tableNotes; //Tableau des notes des élèves, il est garni avec la fonction getNotesData
     JTable tableStats; //Tableau de statistique diverses par rapport au données dans le tableau de notes
     DefaultTableModel modelNotes; //Tablemodel pour tableNotes
+    DefaultTableModel modelStats; //Tablemodel pour tableStats
     JButton btnAdd; //JButton pour ajouter des élèves à tableNotes
     JButton btnModify; //JButton qui modifie les entrées qui existe déja dans tableNotes
     JButton btnDelete; //Supprimer des entrées de tableNotes
@@ -36,7 +39,7 @@ public class View extends JFrame{
     JLabel lblTP1; //Sert à indiquer que l'utilisateur modifie txfTP1
     JLabel lblTP2; //Sert à indiquer que l'utilisateur modifie txfTP2
 
-    // Le keylistener sert a verifier que l'utilisateur entre seulement des entiers, il évite également la répetition
+    // Le keylistener sert a verifier que l'utilisateur entre seulement des entiers, il évite également la création de plusieurs listeners
     KeyListener txfKeyListener = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent e) {
@@ -64,20 +67,6 @@ public class View extends JFrame{
 
     public View() throws IOException {
 
-        //region Section des JTables
-        modelNotes = new DefaultTableModel(dataNotes,colNamesNotes){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tableNotes = new JTable(modelNotes);
-        tableNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tableNotes.setRowSelectionInterval(0,0);
-        JScrollPane scrollNotes = new JScrollPane(tableNotes);
-        scrollNotes.setPreferredSize(new Dimension(600,400));
-        //endregion
-
         //region Section des Labels
         lblDA = new JLabel("DA");
         lblExam1 = new JLabel("Examen 1");
@@ -99,9 +88,69 @@ public class View extends JFrame{
         txfTP2.addKeyListener(txfKeyListener);
         //endregion
 
+        //region Section des JTables
+        modelNotes = new DefaultTableModel(dataNotes,colNamesNotes){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tableNotes = new JTable(modelNotes);
+        tableNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        if(tableNotes.getRowCount() > 0){
+            tableNotes.setRowSelectionInterval(0,0);
+            tableNotesSelectionChange(); // Je call manuellement la fonction pour avoir les informations dans les champs à l'ouverture du programme
+        }
+
+        tableNotes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(e.getValueIsAdjusting()){
+                    tableNotesSelectionChange();
+                }
+            }
+        });
+        tableNotes.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN){
+                    tableNotesSelectionChange();
+                }
+            }
+        });
+
+        JScrollPane scrollNotes = new JScrollPane(tableNotes);
+        scrollNotes.setPreferredSize(new Dimension(600,400));
+        //endregion
+
         //region Déclaration des boutons
         btnAdd = new JButton("Ajouter");
+        btnAdd.addActionListener(e ->{
+            int[][] tempTab =  Utils.convertT2D(modelNotes); //tableau des notes
+            if (Utils.isPresentDA(tempTab, Integer.parseInt(txfDA.getText()))){
+
+            }
+            else{
+
+            }
+        });
+
         btnModify = new JButton("Modifier");
+        btnModify.addActionListener(e ->{
+
+
+        });
         btnDelete = new JButton("Supprimer");
 
         btnQuit = new JButton("Quitter");
@@ -121,7 +170,6 @@ public class View extends JFrame{
                 frame.dispose();
             }
         });
-
         //endregion
 
         //region Panel gauche, panel qui contient la table de notes et de statistiques
@@ -227,6 +275,20 @@ public class View extends JFrame{
         frame.add(bottomRightPanel, BorderLayout.PAGE_END);
         frame.setVisible(true);
         //endregion
+    }
+
+
+    /**
+     * Selon la ligne sélectionné du tableau notes
+     */
+    private void tableNotesSelectionChange() {
+        int[][] tab = Utils.convertT2D((DefaultTableModel) tableNotes.getModel());  //Déclarer un nouveau tableau pour être certain d'avoir toute les rows
+        int selRow = tableNotes.getSelectedRow(); //La ligne sélectionné du tableau
+        txfDA.setText(String.valueOf(tab[selRow][0]));
+        txfExam1.setText(String.valueOf(tab[selRow][1]));
+        txfExam2.setText(String.valueOf(tab[selRow][2]));
+        txfTP1.setText(String.valueOf(tab[selRow][3]));
+        txfTP2.setText(String.valueOf(tab[selRow][4]));
     }
 
     public static void main(String[] args) throws IOException {
