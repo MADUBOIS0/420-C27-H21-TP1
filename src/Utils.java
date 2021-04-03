@@ -1,15 +1,13 @@
 /*
-  Objectif:
+  Objectif: Sert a regrouper des utilitaires qui seront utilisé plusieurs fois dans d'autre classes.
   Auteur: Marc-Antoine Dubois
   Date: 2021-04-02 Session A2021
  */
 
 import javax.swing.table.DefaultTableModel;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
 public class Utils {
-
 
     /**
      * Convertir un DefaultTableModel en Array 2D Integer
@@ -97,6 +95,14 @@ public class Utils {
         tab[i2] = temp;
     }
 
+    /**
+     * Sert à sort de façon ascendante les valeurs d'une colonne
+     * @param tab Tableau 2D des notes
+     * @param tabInd Tableau des indexes du tableau de notes
+     * @param col La colonne ou l'on veux observer les données
+     * @param g L'index le plus a gauche
+     * @param d L'index le plus à droite
+     */
     public static void quickSort(int[][] tab, int[] tabInd,int col, int g, int d){
         if (g < d){
             int index = partition(tab, tabInd, col, g, d);
@@ -105,6 +111,15 @@ public class Utils {
         }
     }
 
+    /**
+     * Utilisé pour verifier si l'on change les éléments du tableau d'endroit
+     * @param tab Tableau 2D des notes
+     * @param tabInd Tableau des indexes du tableau des notes
+     * @param col La colonne ou l'on cherche l'information
+     * @param g Index le plus a gauche
+     * @param d Index le plus a droite
+     * @return Retourne l'index le plus a gauche
+     */
     public static int partition(int[][] tab, int[] tabInd, int col,  int g, int d){
         int pivot = tab[tabInd[d]][col] ;
         for (int i = g; i < d; i++){
@@ -117,6 +132,12 @@ public class Utils {
         return g;
     }
 
+    /**
+     * Verifier si un DA est dans le tableau de notes
+     * @param tab Le tableau 2D de notes
+     * @param valueToFind Le DA à trouver
+     * @return retourne un boolean vrai s'il trouve le DA, sinon il retourne faux
+     */
     public static boolean isPresentDA(int[][] tab, int valueToFind){
         int[] tabIndex = new int[tab.length];
 
@@ -132,6 +153,13 @@ public class Utils {
         else return false;
     }
 
+    /**
+     * La fouilleDicho permet de chercher dans une colonne si le DA s'y trouve
+     * @param tab Tableau 2D des notes
+     * @param tabIndex Tableau des indexes des notes
+     * @param valueToFind Le DA à trouver
+     * @return retourne l'index du DA, si il ne trouve pas le DA il retourne -1
+     */
     public static int fouilleDichoDA(int[][] tab, int[] tabIndex, int valueToFind){
         int debut = 0;
         int millieu = 0;

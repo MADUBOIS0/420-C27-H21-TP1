@@ -1,5 +1,5 @@
 /*
-  Objectif:
+  Objectif: Application qui sert a gerer des notes, permet de créer des élèves et leur ajouter / supprimer des notes, affiche également des statistiques
   Auteur: Marc-Antoine Dubois
   Date: 2021-04-02 Session A2021
  */
@@ -63,6 +63,15 @@ public class View extends JFrame{
 
     String[] colNamesNotes = {"DA", "Examen 1", "Examen 2", "TP1", "TP2", "Total %"}; //Liste des noms pour colonne de tableNotes
     String[][] dataNotes = getNotesData(); // Tableau 2d des DA et notes, reçoit ses données d'un fichier .txt
+
+    String[][] dataStats = {
+            {"Moyenne","0", "0", "0", "0", "0"},
+            {"Nombre minimum","0", "0", "0", "0", "0"},
+            {"Nombre maximum","0", "0", "0", "0"},
+            {"Nombre d'élèves"}
+    };
+    String[] colNamesStats = {" ", " ", " ", " ", " ", " "};
+
     //endregion
 
     public View() throws IOException {
@@ -89,6 +98,15 @@ public class View extends JFrame{
         //endregion
 
         //region Section des JTables
+
+        modelStats = new DefaultTableModel(dataStats, colNamesStats);
+        tableStats = new JTable(modelStats){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         modelNotes = new DefaultTableModel(dataNotes,colNamesNotes){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -133,10 +151,6 @@ public class View extends JFrame{
         //Scrollpane pour la table de notes, permet de scroll si il y a trop de DA
         JScrollPane scrollNotes = new JScrollPane(tableNotes);
         scrollNotes.setPreferredSize(new Dimension(600,400));
-
-        
-
-
         //endregion
 
         //region Déclaration des boutons
@@ -150,6 +164,7 @@ public class View extends JFrame{
             else{
                 modelNotes.addRow(new Object[]{txfDA.getText(), txfExam1.getText(), txfExam2.getText(), txfTP1.getText(), txfTP2.getText(), String.valueOf(getAverage())});
                 tableNotes.setRowSelectionInterval(tempTab.length, tempTab.length);
+                tableStatsChange();
             }
         });
 
@@ -170,6 +185,7 @@ public class View extends JFrame{
                 modelNotes.setValueAt(txfTP1.getText(), row, 3);
                 modelNotes.setValueAt(txfTP2.getText() ,row, 4);
                 modelNotes.setValueAt(getAverage(), row, 5);
+                tableStatsChange();
             }
         });
 
@@ -209,7 +225,7 @@ public class View extends JFrame{
         notesPanel = new JPanel();
         notesPanel.setLayout(new BorderLayout());
         notesPanel.add(scrollNotes, BorderLayout.NORTH);
-        //notesPanel.add(blabla, BorderLayout.SOUTH);
+        notesPanel.add(tableStats , BorderLayout.SOUTH);
         //endregion
 
         //region Panel controle, tout les controles pour modifier les notes
@@ -322,9 +338,25 @@ public class View extends JFrame{
         txfExam2.setText(String.valueOf(tab[selRow][2]));
         txfTP1.setText(String.valueOf(tab[selRow][3]));
         txfTP2.setText(String.valueOf(tab[selRow][4]));
+        tableStatsChange();
     }
 
     private void tableStatsChange(){
+        int[][] tab = Utils.convertT2D((DefaultTableModel) tableNotes.getModel());
+
+        //Moyenne
+        for (int i = 1; i < 6 ; i++){
+            modelStats.setValueAt(Utils.moyenneEval(tab,i), 0, i);
+        }
+        //Minimum
+        for (int i = 1; i < 6 ; i++){
+            modelStats.setValueAt(Utils.minEval(tab,i), 1, i);
+        }
+        //Maximum
+        for (int i = 1; i < 6 ; i++){
+            modelStats.setValueAt(Utils.maxEval(tab,i), 2, i);
+        }
+        modelStats.setValueAt(tab.length, 3, 1);
 
     }
 
@@ -332,6 +364,11 @@ public class View extends JFrame{
         View myView = new View();
     }
 
+    /**
+     *Obtenir un tableau des notes écrit dans un fichier txt
+     * @return retourne un tableau 2D des notes du fichier .txt
+     * @throws IOException
+     */
     public static String[][] getNotesData() throws IOException {
 
         BufferedReader reader = new BufferedReader(new FileReader("texte/notes.txt"));
@@ -362,6 +399,11 @@ public class View extends JFrame{
         return data;
     }
 
+    /**
+     * Sauvegarder les notes au fichier .txt
+     * @param tab Array 2D des notes
+     * @throws IOException
+     */
     public static void saveDataToNotes(int[][] tab) throws IOException {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter("texte/notes.txt", false));
@@ -375,7 +417,7 @@ public class View extends JFrame{
     }
 
     /**
-     *
+     *Obtenir une moyenne
      * @return retourne la moyenne du texte des JTextFields
      */
     private int getAverage(){
